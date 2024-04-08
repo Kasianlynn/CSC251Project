@@ -2,12 +2,10 @@ public class Policy
 {  //fields
    private String policyNumber;
    private String providerName;
-   private String FirstName;
-   private String LastName;
-   private int age;
-   private String smokingStatus;
-   private double height;
-   private double weight;
+   private PolicyHolder policyHolder;
+   private double policyPrice;
+   private static int numberOfPolicies = 0;
+
 
    /**
    No-arg constructor that explicitly initializes all fields
@@ -16,12 +14,9 @@ public class Policy
    {
       policyNumber = "";
       providerName = "";
-      FirstName = "";
-      LastName = "";
-      age = 0;
-      smokingStatus = "";
-      height = 0;
-      weight = 0;
+      policyHolder = new PolicyHolder("", "", 0, "", 0, 0);//Empty policy holder
+      policyPrice = 0.0;
+
    }
    
    /**
@@ -39,198 +34,54 @@ public class Policy
    {
       policyNumber = pNumber;
       providerName = pName;
-      FirstName = fName;
-      LastName = lName;
-      age = a;
-      smokingStatus = sStatus;
-      height = h;
-      weight = w;
+      policyHolder = new PolicyHolder(fName, lName, a, sStatus, h, w);
+      policyPrice = calculatePrice();
+      numberOfPolicies++;
    }
    
-   //getters//
-   /**
-   @return The Policy Number
-   */
-   public String getPolicyNumber()
+   public static int getNumberOfPolicies()
    {
-      return policyNumber;
+      return numberOfPolicies;
    }
    
-   /**
-   @return The Policy Provider's Name
-   */
-   public String getProviderName()
+   public PolicyHolder getPolicyHolder()
    {
-      return providerName;
+      return policyHolder;
    }
    
-   /**
-   @return The Policyholder's first name
-   */
-   public String getFirstName()
+   
+   //Implement price calculation
+   public double calculatePrice()
    {
-      return FirstName;
+     double baseFee = 600.0; //Base fee for the policy
+     double additionalFee = 0.0; //Additional fee based on age, smoking status, and BMI
+     
+     //Check age
+     if (policyHolder.getAge() > 50)
+     {
+         additionalFee += 75.0;
+     }
+     
+     //Check smoking status
+     if(policyHolder.isSmoker())
+     {
+      additionalFee += 100.0;
+     }
+     
+     //Check BMI
+     double bmi = policyHolder.calculateBMI();
+     if (bmi > 35)
+     {
+         additionalFee += (bmi - 35) * 20;
+     }
+     
+     return baseFee + additionalFee;
    }
    
-   /**
-   @return The Policyholder's last name
-   */
-   public String getLastName()
+   public String toString()
    {
-      return LastName;
-   }
-   
-   /**
-   @return The Policyholder's age
-   */
-   public int getAge()
-   {
-      return age;
-   }
-   
-   /**
-   @return The Policyholder's smoking status
-   */
-   public String getSmokingStatus()
-   {
-      return smokingStatus;
-   }
-   
-   /**
-   @return The Policyholder's height
-   */
-   public double getHeight()
-   {
-      return height;
-   }
-   
-   /**
-   @return The Policyholder's weight
-   */
-   public double getWeight()
-   {
-      return weight;
-   }
-   
-   //setters//
-   
-   /**
-   @param pNumber The Policy Number
-   */
-   public void setPolicyNumber(String pNumber)
-   {
-      policyNumber = pNumber;
-   }
-   
-   /**
-   @param pName The Policy Provider's name
-   */
-   public void setProviderName(String pName)
-   {
-      providerName = pName;
-   }
-   
-   /**
-   @param fName The Policy Provider's first name
-   */
-   public void setFirstName(String fName)
-   {
-      FirstName = fName;
-   }
-   
-   /**
-   @param lName The Policy Provider's last name
-   */
-   public void setLastName(String lName)
-   {
-      LastName = lName;
-   }
-   
-   /**
-   @param a The Policy Provider's age
-   */
-   public void setAge(int a)
-   {
-      age = a;
-   }
-   
-   /**
-   @param sStatus The Policy Provider's smoking status
-   */
-   public void setSmokingStatus(String sStatus)
-   {
-      smokingStatus = sStatus;
-   }
-   
-   /**
-   @param h The Policy Provider's height
-   */
-   public void setHeight(double h)
-   {
-      height = h;
-   }
-   
-   /**
-   @param w The Policy Provider's weight
-   */
-   public void setWeight(double w)
-   {
-      weight = w;
-   }
-   
-   /**
-   Calculates the Policyholder's BMI
-   @return The BMI of the Policyholder
-   */
-   public double getBMI()
-   {
-      final double CONVFACTOR = 703;
-      
-      return (weight * CONVFACTOR) / (height * height);
-   }
-   
-   /**
-   Calculates the Policy's price
-   @return The price of the Policy
-   */
-   public double getPrice()
-   {
-      final double BASE_PRICE = 600;
-      final double ADDITIONAL_FEE_AGE = 75;
-      final double ADDITIONAL_FEE_SMOKING = 100;
-      final double ADDITIONAL_FEE_PER_BMI = 20;
-      
-      final int AGE_THRESHOLD = 50;
-      final int BMI_THRESHOLD = 35;
-      
-      double price = BASE_PRICE;
-      
-      if(age > AGE_THRESHOLD)
-         price += ADDITIONAL_FEE_AGE;
-         
-      if(smokingStatus.equalsIgnoreCase("smoker"))
-         price += ADDITIONAL_FEE_SMOKING;
-      
-      if(getBMI() > BMI_THRESHOLD)
-         price += ((getBMI() - BMI_THRESHOLD) * ADDITIONAL_FEE_PER_BMI);
-         
-      return price;
+      String str = "Policy Number: " + policyNumber + "\n" + "Provider Name: " + providerName + "\n" + policyHolder.toString() + "\n" + "Policy Price: $" + String.format ("%.2f\n", policyPrice);
+      return str;
    }
 
-   //Not included in the instructions but can be added...
-   /*Displays information about the Policy
-   public void displayInformation()
-   {
-      System.out.println("Policy Number: " + policyNumber);
-      System.out.println("Provider Name: " + providerName);
-      System.out.println("Policyholder's First Name: " + firstName);
-      System.out.println("Policyholder's Last Name: " + lastName);
-      System.out.println("Policyholder's Age: " + age);
-      System.out.println("Policyholder's Smoking Status (Y/N): " + smokingStatus);
-      System.out.println("Policyholder's Height: " + height + " inches");
-      System.out.println("Policyholder's Weight: " + weight + " pounds");
-      System.out.printf("Policyholder's BMI: %.2f\n", getBMI());
-      System.out.printf("Policy Price: $%.2f\n", getPrice());
-   }
-   */
 }
