@@ -1,169 +1,87 @@
-import java.util.Scanner;
-
 public class Policy
-{
-
-      //fields
-      private int policyNumber;
-      private String providerName;
-      private String firstName;
-      private String lastName;
-      private int age;
-      private String smokingStatus;
-      private double height;
-      private double weight;
-
-      //Construct new Policy object with default values
-      public Policy()
-      {
-         policyNumber = 0;
-         providerName = "";
-         firstName = "";
-         lastName = "";
-         age = 0;
-         smokingStatus = "";
-         height = 0;
-         weight = 0;
-      }
-
-      //@param policyNumber set policy number
-       public void setPolicyNumber(int policyNumber)
-      {
-         this.policyNumber = policyNumber;
-      }
-
-      //@param providerName set privder name
-      public void setProviderName(String providerName)
-      {
-         this.providerName = providerName;
-      }
+{  //fields
+   private String policyNumber;
+   private String providerName;
+   private PolicyHolder policyHolder;
+   private double policyPrice;
+   private static int numberOfPolicies = 0;
 
 
-      //@param firstName set policy holder's first name
-      public void setFirstName(String firstName)
-      {
-         this.firstName = firstName;
-      }
+   /**
+   No-arg constructor that explicitly initializes all fields
+   */
+   public Policy()
+   {
+      policyNumber = "";
+      providerName = "";
+      policyHolder = new PolicyHolder("", "", 0, "", 0, 0);//Empty policy holder
+      policyPrice = 0.0;
 
-      //@param lastName set polic holder's last name
-      public void setLastName(String lastName)
-      {
-         this.lastName = lastName;
-      }
+   }
+   
+   /**
+   Constructor that accepts arguments for each field
+   @param pNumber The Policy number
+   @param pName The Policy Provider's Name
+   @param fName The Policyhodler's first name
+   @param lName The Policyholder's last name
+   @param a The Policyholder's age
+   @param sStatus The Policyholder's smoking status
+   @param h The Policyholder's height
+   @param w The Policytholder's weight
+   */
+   public Policy(String pNumber, String pName, String fName, String lName,int a, String sStatus, double h, double w)
+   {
+      policyNumber = pNumber;
+      providerName = pName;
+      policyHolder = new PolicyHolder(fName, lName, a, sStatus, h, w);
+      policyPrice = calculatePrice();
+      numberOfPolicies++;
+   }
+   
+   public static int getNumberOfPolicies()
+   {
+      return numberOfPolicies;
+   }
+   
+   public PolicyHolder getPolicyHolder()
+   {
+      return policyHolder;
+   }
+   
+   
+   //Implement price calculation
+   public double calculatePrice()
+   {
+     double baseFee = 600.0; //Base fee for the policy
+     double additionalFee = 0.0; //Additional fee based on age, smoking status, and BMI
+     
+     //Check age
+     if (policyHolder.getAge() > 50)
+     {
+         additionalFee += 75.0;
+     }
+     
+     //Check smoking status
+     if(policyHolder.isSmoker())
+     {
+      additionalFee += 100.0;
+     }
+     
+     //Check BMI
+     double bmi = policyHolder.calculateBMI();
+     if (bmi > 35)
+     {
+         additionalFee += (bmi - 35) * 20;
+     }
+     
+     return baseFee + additionalFee;
+   }
+   
+   public String toString()
+   {
+      String str = "Policy Number: " + policyNumber + "\n" + "Provider Name: " + providerName + "\n" + policyHolder.toString() + "\n" + "Policy Price: $" + String.format ("%.2f\n", policyPrice);
+      return str;
+   }
 
-      //@param age set policy holder's age
-      public void setAge(int age)
-      {
-         this.age = age;
-      }
-
-      //@param smokingStatus set policy holder's smoking status (smoker or non-smoker)
-      public void setSmokingStatus(String smokingStatus)
-      {
-         this.smokingStatus = smokingStatus;
-      }
-
-      //@param height set policy holder's height in inches
-      public void setHeight(double height)
-      {
-         this.height = height;
-      }
-
-
-      //@param weight set policy holder's weight in pounds
-      public void setWeight(double weight)
-      {
-         this.weight = weight;
-      }
-      
-      
-      //@return the policy number
-      public int getPolicyNumber()
-      {
-         return policyNumber;
-      }
-
-      //@return the Provider name
-      public String getProviderName()
-      {
-         return providerName;
-      }
-
-      //@return the first name of the policy holder
-      public String getFirstName()
-      {
-         return firstName;
-      }
-
-      //@return the last name of the policy holder
-      public String getLastName()
-      {
-         return lastName;
-      }
-
-      //@return the age of the policy holder
-      public int getAge()
-      {
-         return age;
-      }
-
-
-      //@return the smoking status of the policy holder
-      public String getSmokingStatus()
-      {
-         return smokingStatus;
-      }
-
-
-      //@return the height of the policy holder
-      public double getHeight()
-      {
-         return height;
-      }
-
-
-      //@return the weight of the policy holder
-      public double getWeight()
-      {
-         return weight;
-      }
-
-      /**
-      * Calculates the policy holder's BMI based on the height and weight
-      *@param height The height in inches
-      *@param weight The weight in pounds
-      *@return The calulated BMI
-      */
-      public double calculateBMI(double weight, double height)
-      {
-         return (weight * 703) / (height * height);
-      }
-
-      /**
-      * Calulate the insurance price based on baseFee and additional fees
-      *@return The calculated insurance price
-      */
-      public double calculateInsurancePrice()
-      {
-         double baseFee = 600.0;
-         double additionalFee = 0.0;
-         
-         if (age > 50)
-         {
-            additionalFee += 75.0;
-         }
-         
-         if (smokingStatus.equalsIgnoreCase("smoker"))
-         {
-            additionalFee += 100.0;
-         }
-         
-         double bmi = calculateBMI(weight, height);
-         
-         if (bmi > 35)
-         {
-            additionalFee += (bmi - 35) * 20;
-         }
-         
-         return baseFee + additionalFee;
-      } 
+}
